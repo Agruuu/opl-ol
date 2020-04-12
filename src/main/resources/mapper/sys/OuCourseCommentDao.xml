@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.orhonit.modules.sys.dao.OuCourseCommentDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.orhonit.modules.sys.entity.OuCourseCommentEntity" id="ouCourseCommentMap">
+        <result property="commId" column="comm_id"/>
+        <result property="commCourseId" column="comm_course_id"/>
+        <result property="commUserId" column="comm_user_id"/>
+        <result property="commContent" column="comm_content"/>
+        <result property="commScore" column="comm_score"/>
+        <result property="commAnonymous" column="comm_anonymous"/>
+        <result property="commPictureUrl" column="comm_picture_url"/>
+        <result property="commIsUse" column="comm_is_use"/>
+        <result property="commDate" column="comm_date"/>
+    </resultMap>
+
+    <!-- 按条件查询 -->
+    <select id="list" resultType="com.orhonit.modules.sys.dto.CourseCommentDTO">
+        SELECT  cc.comm_id AS commId,
+        cc.comm_course_id AS commCourseId,
+        cr.course_name AS commCourseName,
+        cc.comm_user_id AS commUserId,
+        us.user_nickname AS commUserName,
+        cc.comm_content AS commContent,
+        cc.comm_score AS commScore,
+        cc.comm_anonymous AS commAnonymous,
+        cc.comm_picture_url AS commPictureUrls,
+        us.user_head_picture AS commUserPictureUrl,
+        cc.comm_date AS commDate
+        FROM tb_ou_course_comment cc
+        LEFT JOIN tb_ou_course cr on cr.course_id = cc.comm_course_id
+        LEFT JOIN sys_user us on us.user_id = cc.comm_user_id
+        <where>
+            cc.comm_is_use = 'Y'
+            <if test="params.courseId != null and params.courseId != ''">
+                and cc.comm_course_id = #{params.courseId}
+            </if>
+            <if test="params.userId != null and params.userId != ''">
+                and cc.comm_user_id = #{params.userId}
+            </if>
+        </where>
+        ORDER BY cc.comm_date DESC
+        <if test="params.startRecord != null and params.length !=null">
+            limit #{params.startRecord}, #{params.length};
+        </if>
+    </select>
+</mapper>

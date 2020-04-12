@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.orhonit.modules.app.dao.AppNewsLbtDao">
+	
+	<select id="getALLlist" resultType="com.orhonit.modules.sys.entity.NewsLbtEntity">
+		SELECT lbt_id,lbt_title,lbt_picurl,crt_time FROM tb_news_lbt ORDER BY lbt_sort DESC
+		<!-- WHERE user_id= #{userId} -->
+	</select>
+</mapper>

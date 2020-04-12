@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.orhonit.modules.app.dao.AppNewsCommentDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.orhonit.modules.app.vo.AppNewsCommentVo" id="newsCommentMap">
+    	<result property="userId" column="user_id"/>
+        <result property="commentId" column="comment_id"/>
+        <result property="commentContent" column="comment_content"/>
+        <result property="createTime" column="create_time"/>
+        <result property="userId" column="user_id"/>
+        <result property="commentReplyCount" column="commentReplyCount"/>	
+        <result property="commentCrtName" column="tncnickname"/>
+        	<collection property="appNewsComReplyVo" ofType="com.orhonit.modules.app.vo.AppNewsComReplyVo">
+		        <result property="replyContent" column="replyContent"/>
+		        <result property="userName" column="tncruserName"/>
+		        <result property="replyTo" column="replyTo"/>
+	            <result property="crtTime" column="crtTime"/>
+			</collection>
+    </resultMap>
+	
+	<select id="newComAndReply" resultMap="newsCommentMap">
+		SELECT
+		tnc.user_id,
+		tnc.comment_id,
+		tnc.comment_content,
+		tnc.create_time,
+		tnc.comment_reply_count AS commentReplyCount,
+		suser.user_nickname AS tncnickname,
+		tncr.reply_content AS replyContent,
+		su.user_nickname AS tncruserName,
+		tncr.reply_to AS replyTo,
+		tncr.crt_time AS crtTime
+		FROM
+		tb_news_comment tnc
+		LEFT JOIN tb_news_comment_reply tncr ON tnc.comment_id = tncr.comment_id
+		LEFT JOIN sys_user suser ON tnc.user_id = suser.user_id	
+		LEFT JOIN sys_user su ON su.user_id = tncr.user_id
+		WHERE tnc.comment_id = #{commentId}
+		ORDER BY tncr.reply_id DESC
+		LIMIT #{beginLimit},#{limit}
+	</select>
+	
+</mapper>

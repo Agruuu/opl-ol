@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.orhonit.modules.sys.dao.NewsCommentDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.orhonit.modules.sys.entity.NewsCommentEntity" id="newsCommentMap">
+        <result property="commentId" column="comment_id"/>
+        <result property="commentContent" column="comment_content"/>
+        <result property="createTime" column="create_time"/>
+        <result property="userId" column="user_id"/>
+        <result property="newId" column="new_id"/>
+        <result property="commentReplyCount" column="comment_reply_count"/>
+    </resultMap>
+	<select id="getNewsCommentByPage" resultType="com.orhonit.modules.sys.entity.NewsCommentEntity">
+		SELECT 
+		tnc.comment_id AS commentId,
+		tnc.comment_content AS commentContent,
+		tnc.create_time AS createTime,
+		tnc.user_id AS userId,
+		tnc.comment_reply_count AS commentReplyCount,
+		su.user_nickname AS userNickName
+		FROM tb_news_comment tnc
+		LEFT JOIN sys_user su ON tnc.user_id = su.user_id
+		WHERE tnc.new_id = #{newId} ORDER BY comment_id DESC LIMIT #{beginLimit},#{limit}
+	</select>
+	
+	<select id="personalcomment" resultType="com.orhonit.modules.sys.entity.NewsCommentEntity">
+		SELECT 
+		tnc.comment_id AS commentId,
+		tnc.comment_content AS commentContent,
+		tnc.create_time AS createTime,
+		tnc.user_id AS userId,
+		tnc.new_id AS newId,
+		tnc.comment_reply_count AS commentReplyCount,
+		su.user_nickname AS userNickName
+		FROM tb_news_comment tnc
+		LEFT JOIN sys_user su ON tnc.user_id = su.user_id
+		WHERE tnc.user_id = #{userId} ORDER BY comment_id DESC LIMIT #{beginLimit},#{limit}
+	</select>
+	
+</mapper>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.orhonit.modules.sys.dao.UserDeptDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.orhonit.modules.sys.entity.UserDeptEntity" id="userDeptMap">
+        <result property="deptId" column="dept_id"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="deptSupperId" column="dept_supper_id"/>
+        <result property="deptX" column="dept_x"/>
+        <result property="deptY" column="dept_y"/>
+        <result property="deptContent" column="dept_content"/>
+        <result property="orgId" column="org_id"/>
+    </resultMap>
+
+	<select id="ListByLike" parameterType="string" resultType="com.orhonit.modules.sys.vo.IdAndNameVo">
+		SELECT dept_id AS id,dept_name AS tName FROM tb_user_dept
+		<if test="deptName!=null and deptName!=''">
+			WHERE dept_name LIKE CONCAT('%',#{deptName},'%')
+		</if>
+	</select>
+	
+	<select id="selectDeptById" resultType="com.orhonit.modules.sys.vo.IdAndNameVo">
+	SELECT dept_id AS id,dept_name AS tName FROM tb_user_dept WHERE dept_id=#{deptId}
+	</select>
+	
+	<select id="selectOrgById" resultType="com.orhonit.modules.sys.vo.IdAndNameVo">
+	SELECT org_id AS id,org_name AS tName FROM tb_user_org WHERE org_id=#{orgId}
+	</select>
+	
+	<select id="getDeptList" resultType="com.orhonit.modules.sys.vo.TreeVo">
+		SELECT dept_id AS treeId,dept_name AS treeName,dept_supper_id AS supperTreeId FROM tb_user_dept
+	</select>
+	
+</mapper>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.orhonit.modules.app.dao.NewsCollcetionDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.orhonit.modules.app.entity.NewsCollcetionEntity" id="newsCollcetionMap">
+        <result property="collcetionId" column="collcetion_id"/>
+        <result property="newId" column="new_id"/>
+        <result property="newTitle" column="new_title"/>
+        <result property="userId" column="user_id"/>
+        <result property="crtTime" column="crt_time"/>
+    </resultMap>
+
+
+</mapper>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.orhonit.modules.sys.dao.OuTeacherDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.orhonit.modules.sys.entity.OuTeacherEntity" id="ouTeacherMap">
+        <result property="teacherId" column="teacher_id"/>
+        <result property="teacherName" column="teacher_name"/>
+        <result property="teacherMajorId" column="teacher_major_id"/>
+        <result property="teacherAreaId" column="teacher_area_id"/>
+        <result property="teacherSex" column="teacher_sex"/>
+        <result property="teacherAge" column="teacher_age"/>
+        <result property="teacherIdentity" column="teacher_identity"/>
+        <result property="teacherCourse" column="teacher_course"/>
+        <result property="teacherExperience" column="teacher_experience"/>
+        <result property="teacherCertificate" column="teacher_certificate"/>
+        <result property="teacherContent" column="teacher_content"/>
+        <result property="teacherEnclosure" column="teacher_enclosure"/>
+        <result property="teacherPictureUrl" column="teacher_picture_url"/>
+        <result property="teacherState" column="teacher_state"/>
+    </resultMap>
+
+    <select id="selectByProperties" resultType="com.orhonit.modules.sys.dto.TeacherDTO">
+        SELECT  t.teacher_id AS teacherId,
+        t.teacher_name AS teacherName,
+        <!--t.teacher_major_id AS teacherMajorId,-->
+        <!--ma.major_title AS teacherMajorTitle,-->
+        <!--t.teacher_area_id AS teacherAreaId,-->
+        <!--ar.name AS teacherAreaName,-->
+        t.teacher_sex AS teacherSex,
+        t.teacher_age AS teacherAge,
+        t.teacher_identity AS teacherIdentity,
+        t.teacher_course AS teacherCourse,
+        t.teacher_experience AS teacherExperience,
+        t.teacher_certificate AS teacherCertificate,
+        t.teacher_content AS teacherContent,
+        t.teacher_enclosure AS teacherEnclosure
+        <!--t.teacher_picture_url AS teacherPictureUrl-->
+        <!--t.teacher_state  AS teacherState-->
+        FROM tb_ou_teacher t
+        <!--LEFT JOIN tb_user_area ar on ar.id = t.teacher_area_id-->
+        <!--LEFT JOIN tb_ou_major ma on ma.major_id = t.teacher_major_id-->
+        <where>
+            t.teacher_state = 'Y'
+            <if test="params.teacherId != null and params.teacherId != ''">
+                and t.teacher_id = #{params.teacherId}
+            </if>
+            <if test="params.teacherName != null and params.teacherName != ''">
+                and t.teacher_name like concat('%', #{params.teacherName}, '%')
+            </if>
+            <if test="params.teacherIdentity != null and params.teacherIdentity != ''">
+                and t.teacher_identity = #{params.teacherIdentity}
+            </if>
+            <if test="params.teacherSex != null and params.teacherSex != ''">
+                and t.teacher_sex = #{params.teacherSex}
+            </if>
+        </where>
+        <if test="params.startRecord != null and params.length !=null">
+            limit #{params.startRecord}, #{params.length};
+        </if>
+    </select>
+
+    <select id="queryCount" resultType="Integer">
+        SELECT  count(*) AS count
+        FROM tb_ou_teacher t
+        <where>
+            t.teacher_state = 'Y'
+            <if test="params.teacherId != null and params.teacherId != ''">
+                and t.teacher_id = #{params.teacherId}
+            </if>
+            <if test="params.teacherName != null and params.teacherName != ''">
+                and t.teacher_name like concat('%', #{params.teacherName}, '%')
+            </if>
+            <if test="params.teacherIdentity != null and params.teacherIdentity != ''">
+                and t.teacher_identity = #{params.teacherIdentity}
+            </if>
+            <if test="params.teacherSex != null and params.teacherSex != ''">
+                and t.teacher_sex = #{params.teacherSex}
+            </if>
+        </where>
+    </select>
+</mapper>

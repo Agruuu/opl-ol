@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.orhonit.modules.sys.dao.OuSignupDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.orhonit.modules.sys.entity.OuSignupEntity" id="ouSignupMap">
+        <result property="signId" column="sign_id"/>
+        <result property="signCourseId" column="sign_course_id"/>
+        <result property="signUserId" column="sign_user_id"/>
+        <result property="signDate" column="sign_date"/>
+    </resultMap>
+
+    <!-- 查询课程报名数据 -->
+    <select id="signupCountList" resultType="com.orhonit.modules.sys.dto.SignupDTO">
+        <!--SELECT  si.sign_id AS signId,
+        si.sign_course_id AS signCourseId,
+        cr.course_name AS signCourseName,
+        si.sign_user_id AS signUserId,
+        us.user_nickname AS signUserName,
+        si.sign_date AS signDate-->
+        SELECT  us.user_nickname AS signUserName,
+        si.sign_date AS signDate
+        FROM tb_ou_signup si
+        LEFT JOIN sys_user us on us.user_id = si.sign_user_id
+        LEFT JOIN tb_ou_course cr on cr.course_id = si.sign_course_id
+        <where>
+            <if test="params.signCourseId != null and params.signCourseId != ''">
+                and si.sign_course_id = #{params.signCourseId}
+            </if>
+            <if test="params.signUserId != null and params.signUserId != ''">
+                and si.sign_user_id = #{params.signUserId}
+            </if>
+        </where>
+        ORDER BY si.sign_date DESC
+        <if test="params.startRecord != null and params.length !=null">
+            limit #{params.startRecord}, #{params.length};
+        </if>
+    </select>
+
+    <!-- 查询课程总报名人数 -->
+    <select id="signCount" resultType="int">
+        SELECT  count(si.sign_id) AS count
+        FROM tb_ou_signup si
+        LEFT JOIN sys_user us on us.user_id = si.sign_user_id
+        LEFT JOIN tb_ou_course cr on cr.course_id = si.sign_course_id
+        <where>
+            <if test="params.signCourseId != null and params.signCourseId != ''">
+                and si.sign_course_id = #{params.signCourseId}
+            </if>
+            <if test="params.signUserId != null and params.signUserId != ''">
+                and si.sign_user_id = #{params.signUserId}
+            </if>
+        </where>
+    </select>
+
+    <select id="userIsSign" resultType="String">
+        SELECT GROUP_CONCAT(sign_course_id) from tb_ou_signup WHERE sign_user_id = #{userId} GROUP BY sign_user_id
+    </select>
+</mapper>

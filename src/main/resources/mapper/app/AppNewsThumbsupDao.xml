@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.orhonit.modules.app.dao.AppNewsThumbsupDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.orhonit.modules.app.entity.AppNewsThumbsupEntity" id="newsThumbsupMap">
+        <result property="thumbsupId" column="thumbsup_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="newId" column="new_id"/>
+    </resultMap>
+	<update id="updateNewZan">
+	UPDATE tb_news SET new_zan = new_zan+1 WHERE new_id = #{newId}
+	</update>
+
+</mapper>

@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.orhonit.modules.sys.dao.OuCourseDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.orhonit.modules.sys.entity.OuCourseEntity" id="ouCoursesMap">
+        <result property="courseId" column="course_id"/>
+        <result property="courseName" column="course_name"/>
+        <result property="courseContent" column="course_content"/>
+        <result property="courseMajorId" column="course_major_id"/>
+        <result property="courseAreaId" column="course_area_id"/>
+        <result property="courseTeacherId" column="course_teacher_id"/>
+        <result property="courseTeacherContent" column="course_teacher_content"/>
+        <result property="courseAddress" column="course_address"/>
+        <result property="courseSignNum" column="course_sign_num"/>
+        <result property="courseHours" column="course_hours"/>
+        <result property="courseSignOpen" column="course_sign_open"/>
+        <result property="courseCompetitive" column="course_competitive"/>
+        <result property="courseIsUse" column="course_is_use"/>
+        <result property="coursePictureUrl" column="course_picture_url"/>
+    </resultMap>
+
+    <select id="selectCourseInfo" resultType="com.orhonit.modules.sys.dto.CourseDTO">
+        SELECT  cr.course_id AS courseId,
+        cr.course_name AS courseName,
+        cr.course_content AS courseContent,
+        cr.course_major_id AS courseMajorId,
+        ma.major_title AS courseMajorTitle,
+        cr.course_area_id AS courseAreaId,
+        ar.name AS courseAreaName,
+        cr.course_teacher_id AS courseTeacherId,
+        tc.teacher_name AS courseTeacherName,
+        tc.teacher_content AS courseTeacherContent,
+        cr.course_address AS courseAddress,
+        cr.course_sign_num AS courseSignNum,
+        cr.course_hours AS courseHours,
+        cr.course_sign_open AS courseSignOpen,
+        cr.course_competitive AS courseCompetitive,
+        cr.course_picture_url AS coursePictureUrl
+        FROM tb_ou_course cr
+        LEFT JOIN tb_ou_major ma on ma.major_id = cr.course_major_id
+        LEFT JOIN tb_user_area ar on ar.id = cr.course_area_id
+        LEFT JOIN tb_ou_teacher tc on tc.teacher_id = cr.course_teacher_id
+        where cr.course_id = #{courseId}
+    </select>
+
+    <select id="selectByPropertiesCount" resultType="Integer">
+        SELECT  count(*) AS count
+        FROM tb_ou_course cr
+        <where>
+            cr.course_is_use = 'Y'
+            <if test="params.courseId != null and params.courseId != ''">
+                and cr.course_id = #{params.courseId}
+            </if>
+            <if test="params.courseAreaId != null and params.courseAreaId != ''">
+                and cr.course_area_id = #{params.courseAreaId}
+            </if>
+            <if test="params.courseMajorId != null and params.courseMajorId != ''">
+                and cr.course_major_id = #{params.courseMajorId}
+            </if>
+            <if test="params.courseTeacherId != null and params.courseTeacherId != ''">
+                and cr.course_teacher_id = #{params.courseTeacherId}
+            </if>
+            <if test="params.courseName != null and params.courseName != ''">
+                and cr.course_name like concat('%', #{params.courseName}, '%')
+            </if>
+            <if test="params.courseSignOpen != null and params.courseSignOpen != ''">
+                and cr.course_sign_open = #{params.courseSignOpen}
+            </if>
+            <if test="params.courseCompetitive != null and params.courseCompetitive != ''">
+                and cr.course_competitive = #{params.courseCompetitive}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectByProperties" resultType="com.orhonit.modules.sys.dto.CourseDTO">
+        SELECT  cr.course_id AS courseId,
+        cr.course_name AS courseName,
+        cr.course_content AS courseContent,
+        cr.course_major_id AS courseMajorId,
+        ma.major_title AS courseMajorTitle,
+        cr.course_area_id AS courseAreaId,
+        ar.name AS courseAreaName,
+        cr.course_teacher_id AS courseTeacherId,
+        tc.teacher_name AS courseTeacherName,
+        tc.teacher_content AS courseTeacherContent,
+        cr.course_address AS courseAddress,
+        cr.course_sign_num AS courseSignNum,
+        cr.course_hours AS courseHours,
+        cr.course_sign_open AS courseSignOpen,
+        cr.course_competitive AS courseCompetitive,
+        cr.course_picture_url AS coursePictureUrl
+        FROM tb_ou_course cr
+        LEFT JOIN tb_ou_major ma on ma.major_id = cr.course_major_id
+        LEFT JOIN tb_user_area ar on ar.id = cr.course_area_id
+        LEFT JOIN tb_ou_teacher tc on tc.teacher_id = cr.course_teacher_id
+        <where>
+            cr.course_is_use = 'Y'
+            <!--
+            cr.course_sign_open = 'Y'
+            and cr.course_is_use = 'Y'
+             -->
+            <!--<if test="params.userId != null and params.userId != ''">
+                and FIND_IN_SET (cr.course_id,
+                (SELECT  GROUP_CONCAT(sign_course_id) from tb_ou_signup
+                WHERE sign_user_id = #{params.userId}
+                GROUP BY sign_user_id
+                ))
+            </if>-->
+            <if test="params.courseId != null and params.courseId != ''">
+                and cr.course_id = #{params.courseId}
+            </if>
+            <if test="params.courseAreaId != null and params.courseAreaId != ''">
+                and cr.course_area_id = #{params.courseAreaId}
+            </if>
+            <if test="params.courseMajorId != null and params.courseMajorId != ''">
+                and cr.course_major_id = #{params.courseMajorId}
+            </if>
+            <if test="params.courseTeacherId != null and params.courseTeacherId != ''">
+                and cr.course_teacher_id = #{params.courseTeacherId}
+            </if>
+            <if test="params.courseName != null and params.courseName != ''">
+                and cr.course_name like concat('%', #{params.courseName}, '%')
+            </if>
+            <if test="params.courseSignOpen != null and params.courseSignOpen != ''">
+                and cr.course_sign_open = #{params.courseSignOpen}
+            </if>
+            <if test="params.courseCompetitive != null and params.courseCompetitive != ''">
+                and cr.course_competitive = #{params.courseCompetitive}
+            </if>
+            <!--<if test="params.courseClassDate != null and params.courseClassDate != ''">
+                and date(cr.course_class_date) = date(#{params.courseClassDate})
+            </if>
+            <if test="params.queryMode != null and params.queryMode != '' and params.queryMode == 1 ">
+                AND weekofyear(date_format(cr.course_class_date,'%Y-%m-%d')) = weekofyear(now())
+            </if>
+            <if test="params.queryMode != null and params.queryMode != '' and params.queryMode == 2 ">
+                AND weekofyear(date_format(cr.course_class_date,'%Y-%m-%d')) = weekofyear(now()) - 1
+            </if>
+            <if test="params.queryMode != null and params.queryMode != '' and params.queryMode == 3 ">
+                AND weekofyear(date_format(cr.course_class_date,'%Y-%m-%d')) = weekofyear(now()) + 1
+            </if>-->
+            <!--<rif test="params.caseTime != null and params.caseTime != ''">
+                and DATEDIFF(DATE_FORMAT(ec.case_time,'%Y-%m-%d'),#{params.caseTime})=0
+            </if>-->
+        </where>
+        ORDER BY cr.course_id DESC
+        <if test="params.startRecord != null and params.length !=null">
+            limit #{params.startRecord}, #{params.length};
+        </if>
+    </select>
+
+    <!-- 查询用户已报课程 -->
+    <select id="selectAlreadySignup" resultType="com.orhonit.modules.sys.dto.CourseDTO">
+        SELECT  cr.course_id AS courseId,
+        cr.course_name AS courseName,
+        cr.course_content AS courseContent,
+        tc.teacher_name AS courseTeacherName,
+        si.sign_date AS courseSignDate,
+        cr.course_picture_url AS coursePictureUrl
+        FROM tb_ou_course cr
+        LEFT JOIN tb_ou_teacher tc on tc.teacher_id = cr.course_teacher_id
+        LEFT JOIN tb_ou_signup si on si.sign_course_id = cr.course_id and si.sign_user_id = #{params.userId}
+        <where>
+            cr.course_is_use = 'Y'
+            <!--cr.course_sign_open = 'Y'-->
+            <if test="params.userId != null and params.userId != ''">
+                and FIND_IN_SET (cr.course_id,
+                (SELECT  GROUP_CONCAT(sign_course_id) from tb_ou_signup
+                WHERE sign_user_id = #{params.userId}
+                GROUP BY sign_user_id
+                ))
+            </if>
+        </where>
+        ORDER BY si.sign_date DESC
+        <if test="params.startRecord != null and params.length !=null">
+            limit #{params.startRecord}, #{params.length};
+        </if>
+    </select>
+
+    <!-- 查询用户未报课程 -->
+    <select id="selectDidntSignup" resultType="com.orhonit.modules.sys.dto.CourseDTO">
+        SELECT  cr.course_id AS courseId,
+        cr.course_name AS courseName,
+        cr.course_content AS courseContent,
+        tc.teacher_name AS courseTeacherName,
+        cr.course_picture_url AS coursePictureUrl
+        FROM tb_ou_course cr
+        LEFT JOIN tb_ou_major ma on ma.major_id = cr.course_major_id
+        LEFT JOIN tb_user_area ar on ar.id = cr.course_area_id
+        LEFT JOIN tb_ou_teacher tc on tc.teacher_id = cr.course_teacher_id
+        <where>
+            cr.course_is_use = 'Y'
+            and cr.course_sign_open = 'Y'
+            and !FIND_IN_SET (cr.course_id,#{params.signCourseId})
+            <!--<if test="params.userId != null and params.userId != ''">
+                and !FIND_IN_SET (cr.course_id,
+                (SELECT  GROUP_CONCAT(sign_course_id) from tb_ou_signup
+                WHERE sign_user_id = #{params.userId}
+                GROUP BY sign_user_id
+                ))
+            </if>-->
+            <!--<if test="params.signCourseId != null and params.signCourseId != ''">
+                and !FIND_IN_SET (cr.course_id,#{params.signCourseId})
+            </if>-->
+            <!--<if test="params.courseClassDate != null and params.courseClassDate != ''">
+                and date(cr.course_class_date) &gt; curdate()
+            </if>-->
+            <if test="params.courseAreaId != null and params.courseAreaId != ''">
+                and cr.course_area_id = #{params.courseAreaId}
+            </if>
+            <if test="params.courseMajorId != null and params.courseMajorId != ''">
+                and cr.course_major_id = #{params.courseMajorId}
+            </if>
+            <if test="params.courseTeacherId != null and params.courseTeacherId != ''">
+                and cr.course_teacher_id = #{params.courseTeacherId}
+            </if>
+        </where>
+        <if test="params.startRecord != null and params.length !=null">
+            limit #{params.startRecord}, #{params.length};
+        </if>
+    </select>
+
+    <!-- 查询上午下午的课 -->
+    <!--<select id="selectCoursesForTomorrow" resultType="com.orhonit.modules.sys.dto.CourseDTO">
+        SELECT  cr.course_id AS courseId,
+        cr.course_name AS courseName,
+        cr.course_content AS courseContent,
+        cr.course_major_id AS courseMajorId,
+        ma.major_title AS courseMajorTitle,
+        cr.course_area_id AS courseAreaId,
+        ar.name AS courseAreaName,
+        cr.course_teacher_id AS courseTeacherId,
+        tc.teacher_name AS courseTeacherName,
+        tc.teacher_content AS courseTeacherContent,
+        cr.course_address AS courseAddress,
+        cr.course_class_date AS courseClassDate,
+        cr.course_sign_num AS courseSignNum
+        FROM tb_ou_course cr
+        LEFT JOIN tb_ou_major ma on ma.major_id = cr.course_major_id
+        LEFT JOIN tb_user_area ar on ar.id = cr.course_area_id
+        LEFT JOIN tb_ou_teacher tc on tc.teacher_id = cr.course_teacher_id
+        <where>
+            <if test="params.userId != null and params.userId != ''">
+                and FIND_IN_SET (cr.course_id,
+                SELECT  GROUP_CONTACT(sign_course_id) from tb_ou_signup
+                WHERE sign_user_id = #{params.userId}
+                )
+            </if>
+        </where>
+        GROUP BY date_format(course_class_date,'%p')
+        <if test="params.start != null and params.length !=null">
+            limit #{startRecord}, #{length};
+        </if>
+    </select>-->
+</mapper>

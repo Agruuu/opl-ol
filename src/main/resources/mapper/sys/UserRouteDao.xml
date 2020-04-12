@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.orhonit.modules.sys.dao.UserRouteDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.orhonit.modules.sys.entity.UserRouteEntity" id="userRouteMap">
+        <result property="routeId" column="route_id"/>
+        <result property="routeName" column="route_name"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="crtTime" column="crt_time"/>
+    </resultMap>
+	
+	<select id="getRouteList" resultMap="userRouteMap">
+	SELECT
+	route_id,
+	route_name,
+	crt_time
+	FROM tb_user_route
+	WHERE dept_id = #{deptId}
+	ORDER BY route_id DESC
+	</select>
+	
+	<delete id="deleteStations">
+		DELETE FROM tb_user_station WHERE route_id = #{routeId}
+	</delete>
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.orhonit.modules.sys.dao.NewsLbtDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.orhonit.modules.sys.entity.NewsLbtEntity" id="newsLbtMap">
+        <result property="lbtId" column="lbt_id"/>
+        <result property="lbtTitle" column="lbt_title"/>
+        <result property="lbtPicurl" column="lbt_picurl"/>
+        <result property="lbtSort" column="lbt_sort"/>
+        <result property="crtTime" column="crt_time"/>
+        <result property="userId" column="user_id"/>
+    </resultMap>
+	<select id="getALLlist" resultMap="newsLbtMap">
+		SELECT lbt_id,lbt_title,lbt_picurl,crt_time 
+		FROM tb_news_lbt
+		ORDER BY lbt_sort DESC
+		<!-- WHERE user_id= #{userId} -->
+	</select>
+
+</mapper>

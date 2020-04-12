@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.orhonit.modules.sys.dao.OuMajorDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.orhonit.modules.sys.entity.OuMajorEntity" id="ouMajorMap">
+        <result property="majorId" column="major_id"/>
+        <result property="majorTitle" column="major_title"/>
+        <result property="majorSupperId" column="major_supper_id"/>
+        <result property="majorContent" column="major_content"/>
+        <result property="majorIsUse" column="major_is_use"/>
+        <result property="areaId" column="area_id"/>
+    </resultMap>
+
+    <select id="comboList" resultType="com.orhonit.modules.sys.dto.MajorDTO">
+        SELECT  ma.major_id as majorId,
+        ma.major_title AS majorTitle
+        FROM tb_ou_major ma
+    </select>
+
+    <select id="findByProperties" resultType="com.orhonit.modules.sys.dto.MajorDTO">
+        SELECT  ma.major_id as majorId,
+        ma.major_title AS majorTitle
+        <!--ma.major_supper_id AS majorSupperId,-->
+        <!--ma.major_content AS majorContent,-->
+        <!--ma.area_id AS areaId,-->
+        <!--ar.name AS areaName-->
+        FROM tb_ou_major ma
+        <!--LEFT JOIN tb_user_area ar on ar.id = ma.area_id-->
+        <where>
+            ma.major_is_use = 'Y'
+            <if test="params.majorId != null and params.majorId != ''">
+                and ma.major_id = #{params.majorId}
+            </if>
+            <if test="params.majorTitle != null and params.majorTitle != ''">
+                and ma.major_title like concat('%', #{params.majorTitle}, '%')
+            </if>
+            <!--<if test="params.areaId != null and params.areaId != ''">
+                and ma.area_id = #{params.areaId}
+            </if>-->
+            <!--<if test="params.majorSupperId != null and params.majorSupperId != ''">
+                and ma.major_supper_id = #{params.majorSupperId}
+            </if>-->
+            <!--<if test="params.majorSupperIdNot != null and params.majorSupperIdNot != ''">
+                AND <![CDATA[ ma.major_supper_id <> 0 ]]>
+            </if>-->
+            <!--<if test="params.majorContent != null and params.majorContent != ''">
+                and ma.major_content like concat('%', #{params.majorContent}, '%')
+            </if>-->
+            <!--<if test="params.caseTime != null and params.caseTime != ''">
+                and DATEDIFF(DATE_FORMAT(ec.case_time,'%Y-%m-%d'),#{params.caseTime})=0
+            </if>-->
+        </where>
+        <if test="params.startRecord != null and params.length !=null">
+            limit #{params.startRecord}, #{params.length};
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.orhonit.modules.sys.dao.UserPhoneNumCardDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.orhonit.modules.sys.entity.UserPhoneNumCardEntity" id="userPhoneNumCardMap">
+        <result property="phoneId" column="phone_id"/>
+        <result property="phoneNumCard" column="phone_num_card"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="orgId" column="org_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="areaId" column="area_id"/>
+    </resultMap>
+	
+	<update id="updateByLoginUserId" parameterType="com.orhonit.modules.sys.entity.UserPhoneNumCardEntity">
+		UPDATE tb_user_phone_num_card SET phone_num_card = #{phoneNumCard},dept_id = #{deptId},org_id = #{orgId},area_id = #{areaId} WHERE user_id = #{userId}
+	</update>
+	
+	<select id="selectByUserId" resultType="com.orhonit.modules.sys.entity.UserPhoneNumCardEntity">
+		SELECT phone_num_card,dept_id,org_id,area_id FROM tb_user_phone_num_card WHERE user_id = #{userId}
+	</select>
+	
+	<select id ="selectByDeptId" resultType="java.lang.String">
+		SELECT phone_num_card FROM tb_user_phone_num_card WHERE dept_id = #{deptId}
+	</select>
+	
+	<select id ="selectByOrgId" resultType="java.lang.String">
+		SELECT phone_num_card FROM tb_user_phone_num_card WHERE org_id = #{orgId}
+	</select>
+	
+	<select id ="selectByAreaId" resultType="java.lang.String">
+		SELECT phone_num_card FROM tb_user_phone_num_card WHERE area_id = #{areaId}
+	</select>
+</mapper>

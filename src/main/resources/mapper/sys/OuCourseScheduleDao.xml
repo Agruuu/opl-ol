@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.orhonit.modules.sys.dao.OuCourseScheduleDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.orhonit.modules.sys.entity.OuCourseScheduleEntity" id="ouCourseScheduleMap">
+        <result property="ctId" column="ct_id"/>
+        <result property="ctCourseId" column="ct_course_id"/>
+        <result property="ctTeacherId" column="ct_teacher_id"/>
+        <result property="ctCourseDate" column="ct_course_date"/>
+        <result property="ctStartTime" column="ct_start_time"/>
+        <result property="ctEndTime" column="ct_end_time"/>
+        <!--<result property="ctPeriod" column="ct_period"/>-->
+        <result property="ctCredit" column="ct_credit"/>
+    </resultMap>
+
+    <!-- 按条件查询 -->
+    <select id="listCount" resultType="Integer">
+        SELECT  count(*) AS count
+        FROM tb_ou_course_schedule cs
+        <where>
+            cs.ct_is_use = 'Y'
+            <if test="params.courseId != null and params.courseId != ''">
+                and cs.ct_course_id = #{params.courseId}
+            </if>
+            <if test="params.teacherId != null and params.teacherId != ''">
+                and cs.ct_teacher_id = #{params.teacherId}
+            </if>
+            <if test="params.courseDate != null and params.courseDate != ''">
+                and date(cs.ct_course_date) = date(#{params.courseDate})
+            </if>
+        </where>
+    </select>
+
+    <!-- 按条件查询 -->
+    <select id="list" resultType="com.orhonit.modules.sys.dto.CourseScheduleDTO">
+        SELECT  cs.ct_id AS ctId,
+        cr.course_name AS ctCourseName,
+        tc.teacher_name AS ctTeacherName,
+        date_format(cs.ct_course_date,'%Y-%m-%d') AS ctCourseDate,
+        cs.ct_start_time AS ctStartTime,
+        cs.ct_end_time AS ctEndTime,
+        cs.ct_credit AS ctCredit,
+        date_format(cs.ct_course_date,'%w') AS ctDayOfWeek,
+        date_format(time(cs.ct_start_time),'%p') as ctPeriod
+        FROM tb_ou_course_schedule cs
+        LEFT JOIN tb_ou_course cr on cr.course_id = cs.ct_course_id
+        LEFT JOIN tb_ou_teacher tc on tc.teacher_id = cs.ct_teacher_id
+        <where>
+            cs.ct_is_use = 'Y'
+            <!--<if test="params.userId != null and params.userId != ''">
+                and FIND_IN_SET (cs.ct_course_id,
+                (SELECT GROUP_CONCAT(sign_course_id) from tb_ou_signup
+                WHERE sign_user_id = #{params.userId}
+                GROUP BY sign_user_id
+                ))
+            </if>-->
+            <if test="params.courseId != null and params.courseId != ''">
+                and cs.ct_course_id = #{params.courseId}
+            </if>
+            <if test="params.teacherId != null and params.teacherId != ''">
+                and cs.ct_teacher_id = #{params.teacherId}
+            </if>
+            <if test="params.courseDate != null and params.courseDate != ''">
+                and date(cs.ct_course_date) = date(#{params.courseDate})
+            </if>
+        </where>
+        ORDER BY cs.ct_course_date, cs.ct_start_time ASC
+        <if test="params.startRecord != null and params.length !=null">
+            limit #{params.startRecord}, #{params.length};
+        </if>
+    </select>
+
+    <!-- 按条件查询 -->
+    <select id="selectByProperties" resultType="com.orhonit.modules.sys.dto.CourseScheduleDTO">
+        SELECT  cs.ct_id AS ctId,
+        cs.ct_course_id AS ctCourseId,
+        cr.course_name AS ctCourseName,
+        cs.ct_teacher_id AS ctTeacherId,
+        tc.teacher_name AS ctTeacherName,
+        cs.ct_course_date AS ctCourseDate,
+        date_format(cs.ct_course_date,'%Y-%m-%d') AS ctCourseDate,
+        cs.ct_start_time AS ctStartTime,
+        cs.ct_end_time AS ctEndTime,
+        cs.ct_credit AS ctCredit,
+        date_format(cs.ct_course_date,'%w') AS ctDayOfWeek,
+        date_format(time(cs.ct_start_time),'%p') as ctPeriod
+        FROM tb_ou_course_schedule cs
+        LEFT JOIN tb_ou_course cr on cr.course_id = cs.ct_course_id
+        LEFT JOIN tb_ou_teacher tc on tc.teacher_id = cs.ct_teacher_id
+        <where>
+            cs.ct_is_use = 'Y'
+            <if test="params.userId != null and params.userId != ''">
+                and FIND_IN_SET (cs.ct_course_id,
+                (SELECT GROUP_CONCAT(sign_course_id) from tb_ou_signup
+                WHERE sign_user_id = #{params.userId}
+                GROUP BY sign_user_id
+                ))
+            </if>
+            <if test="params.courseId != null and params.courseId != ''">
+                and cs.ct_course_id = #{params.courseId}
+            </if>
+            <if test="params.teacherId != null and params.teacherId != ''">
+                and cs.ct_teacher_id = #{params.teacherId}
+            </if>
+            <if test="params.courseDate != null and params.courseDate != ''">
+                and date(cs.ct_course_date) = date(#{params.courseDate})
+            </if>
+            <!--<if test="params.courseClassDate != null and params.courseClassDate != ''">
+                and date(cr.course_class_date) = date(#{params.courseClassDate})
+            </if>-->
+            <if test="params.queryMode != null and params.queryDate != '' and params.queryMode == 1 ">
+                AND weekofyear(date_format(cs.ct_course_date,'%Y-%m-%d')) = weekofyear(now())
+            </if>
+            <if test="params.queryMode != null and params.queryDate != '' and params.queryMode == 2 ">
+                AND weekofyear(date_format(cs.ct_course_date,'%Y-%m-%d')) = weekofyear(now()) - 1
+            </if>
+            <if test="params.queryMode != null and params.queryDate != '' and params.queryMode == 3 ">
+                AND weekofyear(date_format(cs.ct_course_date,'%Y-%m-%d')) = weekofyear(now()) + 1
+            </if>
+            <!--<rif test="params.caseTime != null and params.caseTime != ''">
+                and DATEDIFF(DATE_FORMAT(ec.case_time,'%Y-%m-%d'),#{params.caseTime})=0
+            </if>-->
+        </where>
+        ORDER BY cs.ct_course_date, cs.ct_start_time ASC
+        <if test="params.startRecord != null and params.length !=null">
+            limit #{params.startRecord}, #{params.length};
+        </if>
+    </select>
+
+    <!--批量添加 -->
+    <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true">
+        <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into tb_ou_course_schedule
+        (
+        ct_course_id, ct_teacher_id, ct_course_date, ct_start_time, ct_end_time, ct_credit, ct_is_use
+        )
+        values
+        <foreach collection="list" item="params" index="index"
+                 separator=",">
+            (
+            #{params.ctCourseId},
+            #{params.ctTeacherId},
+            #{params.ctCourseDate},
+            #{params.ctStartTime},
+            #{params.ctEndTime},
+            #{params.ctCredit},
+            #{params.ctIsUse}
+            )
+        </foreach>
+    </insert>
+
+    <!--批量添加 -->
+    <delete id="deleteByCourseId" parameterType="INTEGER">
+        delete from tb_ou_course_schedule
+        where ct_course_id = #{courseId}
+    </delete>
+</mapper>

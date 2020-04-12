@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.orhonit.modules.sys.dao.UserStationDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.orhonit.modules.sys.entity.UserStationEntity" id="userStationMap">
+        <result property="stationId" column="station_id"/>
+        <result property="stationName" column="station_name"/>
+        <result property="stationSort" column="station_sort"/>
+        <result property="routeId" column="route_id"/>
+        <result property="stationArrivalTime" column="station_arrival_time"/>
+    </resultMap>
+	<select id="getStationList" resultMap="userStationMap">
+		SELECT
+		station_id,
+		station_name,
+		station_sort,
+		station_arrival_time
+		FROM tb_user_station
+		WHERE route_id = #{routeId}
+		ORDER BY station_sort
+	</select>
+
+</mapper>

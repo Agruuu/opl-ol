@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.orhonit.modules.sys.dao.NewsModelDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.orhonit.modules.sys.entity.NewsModelEntity" id="newsModelMap">
+        <result property="modelId" column="model_id"/>
+        <result property="modelTitle" column="model_title"/>
+        <result property="modelSupperId" column="model_supper_id"/>
+        <result property="modelType" column="model_type"/>
+    </resultMap>
+
+	<select id="getNewsModelTree" resultType="com.orhonit.modules.sys.vo.NewsModelTreeVo">
+	 SELECT model_id AS treeId,model_title AS treeName,model_supper_id AS supperTreeId,model_type AS treeType FROM tb_news_model ORDER BY model_id
+	</select>
+	
+</mapper>

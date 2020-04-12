@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.orhonit.modules.app.dao.AppNewsDao">
+	<resultMap type="com.orhonit.modules.app.vo.AppNewsVo" id="appNewsMap">
+		<result property="newId" column="new_id"/>
+        <result property="newTitle" column="new_title"/>
+        <result property="newContent" column="new_content"/>
+        <result property="newPictureUrl" column="new_picture_url"/>
+        <result property="newType" column="new_type"/>
+        <result property="newCreateTime" column="new_create_time"/>
+        <result property="newFrom" column="new_from"/>
+        <result property="newFromUrl" column="new_from_url"/>
+        <result property="userId" column="user_id"/>
+        <result property="newClick" column="new_click"/>
+        <result property="newTopNew" column="new_top_new"/>
+        <result property="newZan" column="new_zan"/>
+        <result property="newCrtName" column="tnnickname"/>      
+	        <collection property="appNewsCommentVo" ofType="com.orhonit.modules.app.vo.AppNewsCommentVo">
+		        <result property="commentContent" column="tnccomment"/>
+		        <result property="createTime" column="tnccrttime"/>
+		        <result property="userId" column="tncuserid"/>
+		        <result property="commentReplyCount" column="commentReplyCount"/>		       
+		         <result property="commentCrtName" column="tncnickname"/>
+			</collection>
+	</resultMap>
+<select id="selectNewAndComment" resultMap="appNewsMap">
+	SELECT
+	tn.new_id,
+	tn.new_title,
+	tn.new_content,
+	tn.new_picture_url,
+	tn.new_type,
+	tn.new_create_time,
+	tn.new_from,
+	tn.new_from_url,
+	tn.user_id,
+	tn.new_click,
+	tn.new_top_new,
+	tn.new_zan,
+	su.user_nickname AS tnnickname,
+	tnc.comment_content AS tnccomment,
+	tnc.create_time AS tnccrttime,
+	tnc.user_id AS tncuserid,
+	tnc.comment_reply_count AS commentReplyCount,
+	suser.user_nickname AS tncnickname
+	FROM tb_news tn
+	LEFT JOIN sys_user su ON tn.user_id = su.user_id
+	LEFT JOIN tb_news_comment tnc ON tn.new_id = tnc.new_id
+	LEFT JOIN sys_user suser ON tnc.user_id = suser.user_id
+	WHERE tn.new_id=#{newId}
+	ORDER BY tnc.comment_id DESC LIMIT #{beginLimit},#{limit}
+</select>
+
+<select id="getAppNewsList" resultType="com.orhonit.modules.app.vo.AppNewsListVo">
+	SELECT 
+	new_id,
+	new_title,
+	new_content,
+	new_picture_url,
+	new_type,
+	new_create_time,
+	new_from,
+	new_from_url,
+	new_click,
+	new_top_new
+	FROM tb_news WHERE new_model = #{newModel}
+	ORDER BY new_id DESC 
+	LIMIT #{beginLimit},#{limit}
+</select>
+
+<select id="getTopNew" resultType="com.orhonit.modules.app.vo.AppNewsListVo">
+	SELECT 
+	new_id,
+	new_title,
+	new_content,
+	new_picture_url,
+	new_type,
+	new_create_time,
+	new_from,
+	new_from_url,
+	new_click,
+	new_top_new
+	FROM tb_news WHERE new_top_new = #{newTopNew} AND new_supper_model = #{newSupperModel}
+	ORDER BY new_id DESC 
+	LIMIT #{beginLimit},#{limit}
+</select>
+
+<select id="myWorks" resultType="com.orhonit.modules.app.vo.AppNewsListVo">
+	SELECT 
+	new_id,
+	new_title,
+	new_content,
+	new_picture_url,
+	new_type,
+	new_create_time,
+	new_from,
+	new_from_url,
+	new_click,
+	new_top_new
+	FROM tb_news WHERE user_id = #{userId} AND new_model=#{newModel}
+	ORDER BY new_id DESC 
+	LIMIT #{beginLimit},#{limit}
+</select>
+
+<select id="interaction" resultType="com.orhonit.modules.app.vo.AppNewsListVo">
+	SELECT 
+	new_id,
+	new_title,
+	new_content,
+	new_picture_url,
+	new_type,
+	new_create_time,
+	new_from,
+	new_from_url,
+	new_click,
+	new_top_new
+	FROM tb_news WHERE new_dept_id = #{userDept}
+	ORDER BY new_id DESC 
+	LIMIT #{beginLimit},#{limit}
+</select>
+
+<select id="menAndMiss" resultType="com.orhonit.modules.app.vo.AppNewsListVo">
+	SELECT 
+	new_id,
+	new_title,
+	new_content,
+	new_picture_url,
+	new_type,
+	new_create_time,
+	new_from,
+	new_from_url,
+	new_click,
+	new_top_new
+	FROM tb_news 
+	WHERE new_dept_id = #{userDept} AND new_model = #{newModel}
+	ORDER BY new_id DESC 
+	LIMIT #{beginLimit},#{limit}
+</select>
+
+<select id="getTopNewTwo" resultType="com.orhonit.modules.app.vo.AppNewsListVo">
+	SELECT 
+	new_id,
+	new_title,
+	new_content,
+	new_picture_url,
+	new_type,
+	new_create_time,
+	new_from,
+	new_from_url,
+	new_click,
+	new_top_new
+	FROM tb_news WHERE new_top_new = #{newTopNew}
+	WHERE model_supper_id != 24
+	ORDER BY new_id DESC 
+	LIMIT #{beginLimit},#{limit}
+</select>
+
+<update id="updatenewClick">
+	UPDATE tb_news SET new_click = new_click+1 WHERE new_id = #{newId}
+</update>
+
+<select id="selectIsZan" resultType="java.lang.Integer">
+SELECT COUNT(thumbsup_id) FROM tb_news_thumbsup WHERE user_id = #{userId} AND new_id = #{newId}
+</select>
+<select id="getAllNewByLike" resultType="com.orhonit.modules.app.vo.AppNewsListVo">
+	SELECT 
+	new_id,
+	new_title,
+	new_content,
+	new_create_time
+	FROM tb_news WHERE new_title LIKE "%"#{newTitle}"%"
+	WHERE model_supper_id != 24
+	ORDER BY new_id DESC
+	LIMIT #{beginLimit},#{limit}
+</select>
+
+</mapper>

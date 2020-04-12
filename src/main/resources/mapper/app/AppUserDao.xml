@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.orhonit.modules.app.dao.AppUserDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.orhonit.modules.app.entity.AppUserEntity" id="appUserMap">
+        <result property="userId" column="user_id"/>
+        <result property="username" column="username"/>
+        <result property="appUserNickname" column="app_user_nickname"/>
+        <result property="userTrueName" column="user_true_name"/>
+        <result property="mobile" column="mobile"/>
+        <result property="password" column="password"/>
+        <result property="appUserSex" column="app_user_sex"/>
+        <result property="appUserRace" column="app_user_race"/>
+        <result property="appUserBirthday" column="app_user_birthday"/>
+        <result property="appUserHeadPicture" column="app_user_head_picture"/>
+        <result property="appUserDept" column="app_user_dept"/>
+        <result property="appUserOrg" column="app_user_org"/>
+        <result property="appUserWork" column="app_user_work"/>
+        <result property="isPartyMember" column="is_party_member"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="appUserArea" column="app_user_area"/>
+        <result property="appUserAddressX" column="app_user_address_x"/>
+        <result property="appUserAddressY" column="app_user_address_y"/>
+        <result property="appUserPartyPosts" column="app_user_party_posts"/>
+    </resultMap>
+
+
+</mapper>

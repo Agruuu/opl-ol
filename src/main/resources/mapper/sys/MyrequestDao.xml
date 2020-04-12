@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.orhonit.modules.sys.dao.MyrequestDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.orhonit.modules.sys.entity.MyrequestEntity" id="myrequestMap">
+        <result property="myreqId" column="myreq_id"/>
+        <result property="myreqReq" column="myreq_req"/>
+        <result property="myreqRes" column="myreq_res"/>
+        <result property="myreqReqTime" column="myreq_req_time"/>
+        <result property="myreqResTime" column="myreq_res_time"/>
+        <result property="myreqIsRes" column="myreq_is_res"/>
+        <result property="reqUserId" column="req_user_id"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="resUserId" column="res_user_id"/>      
+    </resultMap>
+	<select id="selectInfoMyrequest" resultType="com.orhonit.modules.sys.vo.MyrequestEntityVo">
+		SELECT
+		myreq_req AS myreqReq,
+		myreq_res AS myreqRes,
+		myreq_req_time AS myreqReqTime,
+		myreq_res_time AS myreqResTime,
+		myreq_is_res AS myreqIsRes,
+		req_user_id AS reqUserId,
+		dept_id AS deptId,
+		res_user_id AS resUserId,
+		su.user_nickname AS reqName,
+		suTwo.user_nickname AS resName
+		FROM tb_myrequest tm
+		LEFT JOIN sys_user su ON tm.req_user_id = su.user_id
+		LEFT JOIN sys_user suTwo ON tm.res_user_id = suTwo.user_id
+		WHERE myreq_id = #{myreqId}
+	</select>
+</mapper>

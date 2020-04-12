@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.orhonit.modules.sys.dao.MeetingDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.orhonit.modules.sys.entity.MeetingEntity" id="meetingMap">
+        <result property="meetId" column="meet_id"/>
+        <result property="meetTitle" column="meet_title"/>
+        <result property="meetContent" column="meet_content"/>
+        <result property="meetingStatus" column="meeting_status"/>
+        <result property="userId" column="user_id"/>
+        <result property="crtTime" column="crt_time"/>
+        <result property="updTime" column="upd_time"/>
+        <result property="orgId" column="org_id"/>
+        <result property="routeId" column="route_id"/>
+        <result property="meetBeginTime" column="meet_begin_time"/>
+        <result property="meetEndTime" column="meet_end_time"/>
+    </resultMap>
+    
+	<insert id="setMeetUsers">
+		INSERT INTO tb_meet_people(meet_id,user_id,user_area,org_id,mobile_phone) SELECT #{ts},user_id,#{userArea},#{userOrg},mobile FROM sys_user WHERE user_org=#{userOrg}
+	</insert>
+	
+	<insert id="saveMeetByArea">
+		INSERT INTO tb_meet_people(meet_id,user_id,user_area,org_id,mobile_phone) SELECT #{ts},user_id,#{userArea},#{userOrg},mobile FROM sys_user WHERE user_area=#{userArea}
+	</insert>
+	
+	<insert id="saveMeetAll">
+		INSERT INTO tb_meet_people(meet_id,user_id,user_area,org_id,mobile_phone) SELECT #{ts},user_id,#{userArea},#{userOrg},mobile FROM sys_user
+	</insert>
+	
+	<insert id="insertMeet" parameterType="com.orhonit.modules.sys.entity.MeetingEntity">
+		INSERT INTO 
+		tb_meeting (meet_id,meet_title,meet_content,user_id,user_area,org_id,route_id,meet_begin_time,meet_end_time) 
+		VALUES 
+		(#{meetId,jdbcType=BIGINT},#{meetTitle,jdbcType=VARCHAR},#{meetContent,jdbcType=LONGVARCHAR},#{userId,jdbcType=BIGINT},#{userArea,jdbcType=VARCHAR},#{orgId,jdbcType=INTEGER},#{routeId,jdbcType=INTEGER},#{meetBeginTime,jdbcType=DATE},#{meetEndTime,jdbcType=DATE})
+	</insert>
+	
+	<select id="getIsSigninAndStation" resultType="com.orhonit.modules.sys.vo.MeetPeopleVo">
+		SELECT
+		tmp.people_id AS peopleId,
+		tmp.meet_id AS meetId,
+		IFNULL(tus.station_name,"不需要接送") AS stationName,
+		su.user_true_name AS userTrueName,
+		tmp.mobile_phone AS mobilePhone,
+		tmp.people_need_meet AS peopleNeedMeet,
+		tmp.people_is_signin AS peopleIsSignin,
+		tmp.people_lve_msg AS peopleLveMsg
+		FROM tb_meet_people tmp
+		LEFT JOIN tb_user_station tus ON tus.station_id = tmp.station_id
+		LEFT JOIN sys_user su ON su.user_id = tmp.user_id
+		WHERE meet_id=#{meetId} AND tmp.people_join = 1
+		ORDER BY IF(ISNULL(tus.station_sort),1,0),tus.station_sort
+	</select>
+	
+	<update id="updateMeetStatus">
+		UPDATE tb_meeting SET meeting_status = #{meetStatus} WHERE meet_id = #{meetId}
+	</update>
+	
+	<select id ="getmeetcounts" resultType="java.lang.Integer">
+	SELECT COUNT(people_id) FROM tb_meet_people WHERE people_is_read = 0 AND user_id = #{userId}
+	</select>
+</mapper>

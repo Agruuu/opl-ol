@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.orhonit.modules.sys.dao.WelcomeNewpDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.orhonit.modules.sys.entity.WelcomeNewpEntity" id="welcomeNewpMap">
+        <result property="newpId" column="newp_id"/>
+        <result property="newpUserId" column="newp_user_id"/>
+        <result property="crtTime" column="crt_time"/>
+        <result property="newpIsRead" column="newp_is_read"/>
+        <result property="userId" column="user_id"/>
+        <result property="userTrueName" column="user_true_name"/>
+    </resultMap>
+	<insert id="insertSelect">
+		INSERT INTO tb_welcome_newp(newp_user_id,user_id) SELECT #{newpUserId},user_id FROM sys_user WHERE user_dept=#{deptId}
+	</insert>
+	
+	<select id="selectWelList" resultType="com.orhonit.modules.sys.entity.WelcomeNewpEntity">
+		SELECT 
+		twn.newp_id,
+		twn.newp_user_id,
+		twn.crt_time,
+		twn.newp_is_read,
+		twn.user_id,
+		su.user_true_name
+		FROM tb_welcome_newp twn
+		LEFT JOIN sys_user su ON su.user_id = twn.newp_user_id
+		WHERE twn.user_id = #{userId}
+		ORDER BY twn.newp_id DESC
+		LIMIT #{beginLimit},#{limit}
+	</select>
+	
+	<select id="selectNewpById" resultType="com.orhonit.modules.sys.vo.WelcomeNewpVo">
+		SELECT 
+		twn.newp_id AS newpId,
+		twn.newp_user_id AS newpUserId,
+		twn.crt_time AS crtTime,
+		su.user_true_name AS userTrueName,
+		su.user_sex AS userSex,
+		su.user_birthday AS userBirthday,
+		su.user_head_picture AS userHeadPicture,
+		su.user_work AS userWork,
+		su.email AS email,
+		sd.dict_name AS dictName
+		FROM tb_welcome_newp twn
+		LEFT JOIN sys_user su ON su.user_id = twn.newp_user_id
+		LEFT JOIN sys_dict sd ON su.user_race = sd.dict_code AND sd.dict_type = 'race'
+		WHERE twn.newp_id = #{newpId}
+	</select>
+
+</mapper>

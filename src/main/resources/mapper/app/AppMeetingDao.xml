@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.orhonit.modules.app.dao.AppMeetingDao">
+	<select id="getMeetingList" resultType="com.orhonit.modules.app.vo.AppMeetingVo">
+		SELECT
+		tmp.meet_id AS meetId,
+		tmp.people_id AS peopleId,
+		tmp.people_is_read AS peopleIsRead,
+		tm.crt_time AS crtTime,
+		tm.meet_title AS meetTitle,
+		tm.meeting_status AS meetingStatus,
+		tm.meet_begin_time AS meetBeginTime,
+		tm.meet_end_time AS meetEndTime
+		FROM tb_meet_people tmp
+		LEFT JOIN tb_meeting tm ON tmp.meet_id = tm.meet_id
+		WHERE tmp.user_id = #{userId}
+		ORDER BY tmp.people_id DESC
+		LIMIT #{beginLimit},#{limit}
+	</select>
+
+	<select id="getJoinMeetList" resultType="com.orhonit.modules.app.vo.AppMeetingVo">
+		SELECT
+		tmp.meet_id AS meetId,
+		tmp.people_id AS peopleId,
+		tmp.people_is_signin AS peopleIsSignin,
+		tm.crt_time AS crtTime,
+		tm.meet_title AS meetTitle,
+		tm.meeting_status AS meetingStatus,
+		tm.meet_begin_time AS meetBeginTime,
+		tm.meet_end_time AS meetEndTime
+		FROM tb_meet_people tmp
+		LEFT JOIN tb_meeting tm ON tmp.meet_id = tm.meet_id
+		WHERE tmp.user_id = #{userId} AND people_join = 1
+		ORDER BY tmp.people_id DESC
+		LIMIT #{beginLimit},#{limit}
+	</select>
+	
+	<select id="userGetOneMeet" resultType="com.orhonit.modules.app.vo.AppOneMeetVo">
+		SELECT
+		tmp.people_id AS peopleId,
+		tmp.people_need_meet AS peopleNeedMeet,
+		tmp.people_is_signin AS peopleIsSignin,
+		tmp.station_id AS stationId,
+		tmp.people_join AS peopleJoin,
+		tm.meet_title AS meetTitle,
+		tm.meet_content AS meetContent,
+		tm.meeting_status AS meetingStatus,
+		tm.route_id AS routeId,
+		tm.meet_begin_time AS meetBeginTime,
+		tm.meet_end_time AS meetEndTime,
+		tm.crt_time AS crtTime,
+		tur.route_name AS routeName,
+		tus.station_name AS stationName,
+		tus.station_arrival_time AS stationArrivalTime
+		FROM tb_meet_people tmp
+		LEFT JOIN tb_meeting tm ON tmp.meet_id = tm.meet_id
+		LEFT JOIN tb_user_route tur ON tm.route_id = tur.route_id
+		LEFT JOIN tb_user_station tus ON tmp.station_id = tus.station_id
+		WHERE tmp.people_id = #{peopleId}
+	</select>
+		
+	<update id="updateMeetStatus">
+		UPDATE tb_meeting SET meeting_status = #{meetStatus} WHERE meet_id = #{meetId}
+	</update>
+	
+	<update id="updMeetPeople">
+		UPDATE tb_meet_people SET people_is_read = 1 WHERE people_id = #{peopleId}
+	</update>
+	
+	<update id="updSignin">
+		UPDATE tb_meet_people SET people_is_signin = !people_is_signin WHERE people_id = #{peopleId}
+	</update>
+	
+	<select id="countNotRead" resultType="java.lang.Integer">
+		SELECT COUNT(people_id) FROM tb_meet_people WHERE user_id = #{userId} AND people_is_read = 0
+	</select>
+	
+	<update id="peopleJoin">
+		UPDATE tb_meet_people SET people_join = 1
+		<if test="peopleNeedMeet!=null and peopleNeedMeet!=''">
+		,people_need_meet = #{peopleNeedMeet} 
+		</if>
+		<if test="stationId!=null and stationId!=''">
+		,station_id = #{stationId} 
+		</if>
+		<if test="peopleLveMsg!=null and peopleLveMsg!=''">
+		,people_lve_msg = #{peopleLveMsg} 
+		</if>
+		WHERE people_id = #{peopleId}	
+	</update>
+
+</mapper>
